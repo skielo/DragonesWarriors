@@ -13,11 +13,11 @@ public final class ConfigurationManager {
 	}
 	
 	public int getMapHeight() {
-		return 50;
+		return 40;
 	}
 	
 	public int getMapWidth() {
-		return 50;
+		return 40;
 	}
 	
 	public int getTurnsToShrink() {
