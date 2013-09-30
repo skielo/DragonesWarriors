@@ -1,5 +1,7 @@
 package ew.battle.entities;
 
+import java.util.ArrayList;
+
 import ia.battle.camp.BattleField;
 import ia.battle.camp.ConfigurationManager;
 import ia.battle.camp.FieldCell;
@@ -9,7 +11,7 @@ import ia.exceptions.OutOfMapException;
 
 public class Map {
 	private int[][] cells;
-	
+
 	public Map(){
 		this.initCells();
 	}
@@ -34,6 +36,44 @@ public class Map {
 			}
 		}
 	}
+
+	public ArrayList<Node> GenerarNodos(Node parent){
+		int x=0, y=0;
+		Node nodo = null;
+		ArrayList<Node> retval = new ArrayList<>();
+		for(int i=1; i<=3;i++){
+			switch(i){
+			case 1:
+				x=parent.getX()-1;
+				break;
+			case 2:
+				x=parent.getX();
+				break;
+			case 3:
+				x=parent.getX()+1;
+				break;
+			}
+			//arriba
+			y=parent.getY()+1;
+			nodo = new Node(x, y);
+			nodo.setParent(parent);
+			retval.add(nodo);
+			// centro
+			if(i!=2){
+				y=parent.getY();
+				nodo = new Node(x, y);
+				nodo.setParent(parent);
+				retval.add(nodo);	
+			}
+			//abajo
+			y=parent.getY()-1;
+			nodo = new Node(x, y);
+			nodo.setParent(parent);
+			retval.add(nodo);
+		}
+
+		return retval;
+	}
 	
 	public boolean IsCellBlocked(int x, int y){
 		return (this.cells[x][y] == 0);
@@ -42,14 +82,15 @@ public class Map {
 	/*Genera el calculo del valor F sumando G + H
 	 * 
 	 */
-	public double CalculateFValue(int[][] actual, int[][] destino){
-		return this.CalculateGValue(actual, destino) + this.CalcularHValue(actual, destino);
+	public void CalculateFValue(Node nodo, Node destino){
+		nodo.setG(this.CalculateGValue(nodo.getX(), nodo.getY(), destino.getX(), destino.getY()));
+		nodo.setH(this.CalcularHValue(nodo.getX(), nodo.getY(), destino.getX(), destino.getY()));
 	}
 	
 	/*TODO: Generar el calculo del valor G
 	 * 
 	 */
-	private double CalculateGValue(int[][] actual, int[][] destino){
+	private double CalculateGValue(int x, int y, int xdestino, int ydestino){
 		double retval = 0;
 		return retval;
 	}
@@ -57,7 +98,7 @@ public class Map {
 	/*TODO: Generar el calculo del valor H
 	 * utilizando el metodo Manhatan
 	 */
-	private double CalcularHValue(int[][] actual, int[][] destino){
+	private double CalcularHValue(int x, int y, int xdestino, int ydestino){
 		double retval = 0;
 		return retval;
 	}
