@@ -42,14 +42,14 @@ public class Map {
 	/*Genera el calculo del valor F sumando G + H
 	 * 
 	 */
-	public double CalculateFValue(){
-		return this.CalculateGValue() + this.CalcularHValue();
+	public double CalculateFValue(int[][] actual, int[][] destino){
+		return this.CalculateGValue(actual, destino) + this.CalcularHValue(actual, destino);
 	}
 	
 	/*TODO: Generar el calculo del valor G
 	 * 
 	 */
-	private double CalculateGValue(){
+	private double CalculateGValue(int[][] actual, int[][] destino){
 		double retval = 0;
 		return retval;
 	}
@@ -57,7 +57,7 @@ public class Map {
 	/*TODO: Generar el calculo del valor H
 	 * utilizando el metodo Manhatan
 	 */
-	private double CalcularHValue(){
+	private double CalcularHValue(int[][] actual, int[][] destino){
 		double retval = 0;
 		return retval;
 	}
