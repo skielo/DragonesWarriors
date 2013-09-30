@@ -8,7 +8,7 @@ import ia.battle.entities.Move;
 
 public class AndrewMove extends Move {
 	
-	private ArrayList<FieldCell> steps = new ArrayList<>();
+	private ArrayList<FieldCell> steps = new ArrayList<FieldCell>();
 	
 	@Override
 	public ArrayList<FieldCell> move() {

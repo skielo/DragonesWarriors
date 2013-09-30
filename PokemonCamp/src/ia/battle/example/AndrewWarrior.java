@@ -25,7 +25,7 @@ public class AndrewWarrior extends Warrior {
 
 		AndrewMove am = new AndrewMove();
 
-		ArrayList<FieldCell> stepsToDo = new ArrayList<>();
+		ArrayList<FieldCell> stepsToDo = new ArrayList<FieldCell>();
 
 		int x = this.getPosition().getX();
 		int y = this.getPosition().getY();

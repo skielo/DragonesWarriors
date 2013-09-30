@@ -121,7 +121,7 @@ public class BattleField {
 	 */
 	public ArrayList<Warrior> getWarriors() throws RuleException {
 
-		ArrayList<Warrior> warriors = new ArrayList<>();
+		ArrayList<Warrior> warriors = new ArrayList<Warrior>();
 
 		warriors.add(warriorWrapper1.getWarrior());
 		warriors.add(warriorWrapper2.getWarrior());
