@@ -1,7 +1,13 @@
 package ia.battle.entities;
 
 public final class Attack extends Action {
-
-	public final void attack() {
+	private Warrior attackedWarrior;
+	
+	public Attack(Warrior attacWarrior) {
+		this.attackedWarrior = attacWarrior;
+	}
+	
+	public Warrior getAttackedWarrior() {
+		return attackedWarrior;
 	}
 }

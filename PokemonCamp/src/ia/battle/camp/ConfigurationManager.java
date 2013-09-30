@@ -24,5 +24,7 @@ public final class ConfigurationManager {
 		return 5000;
 	}
 	
-	
+	public int getActionsPerTurn() {
+		return 3;
+	}
 }

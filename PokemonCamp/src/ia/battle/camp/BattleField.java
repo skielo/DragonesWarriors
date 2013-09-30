@@ -13,6 +13,7 @@ import ia.exceptions.OutOfMapException;
 import ia.exceptions.RuleException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -25,8 +26,7 @@ public class BattleField {
 
 	private WarriorManager wm1, wm2;
 	private WarriorWrapper currentWarriorWrapper, warriorWrapper1, warriorWrapper2;
-
-	private int warrior1Count, warrior2Count;
+	private HashMap<Warrior, WarriorWrapper> warriors;
 
 	private FieldCell[][] cells;
 
@@ -121,7 +121,7 @@ public class BattleField {
 	 */
 	public ArrayList<Warrior> getWarriors() throws RuleException {
 
-		ArrayList<Warrior> warriors = new ArrayList<Warrior>();
+		ArrayList<Warrior> warriors = new ArrayList<>();
 
 		warriors.add(warriorWrapper1.getWarrior());
 		warriors.add(warriorWrapper2.getWarrior());
@@ -129,19 +129,28 @@ public class BattleField {
 		return warriors;
 	}
 
+	/**
+	 * Devuelve si el warrior esta en el rango de ataque del warrior actual.
+	 * 
+	 * @param warrior
+	 * @return
+	 */
+	public boolean isWarriorInRange(Warrior warrior) {
+		// TODO: Implementar
+
+		return true;
+	}
+
 	public ArrayList<FieldCell> getSpecialItems() {
 		ArrayList<FieldCell> items = new ArrayList<FieldCell>();
 
-		
-		
-		
-		
 		return items;
 	}
 
 	private void fight() {
 
 		tick = 0;
+		int actionPerTurns = ConfigurationManager.getInstance().getActionsPerTurn();
 
 		if (frame != null) {
 			frame.dispose();
@@ -157,11 +166,7 @@ public class BattleField {
 		wm1 = new AndrewWarriorManager();
 		wm2 = new AndrewWarriorManager();
 
-		warrior1Count = 1;
-		warrior2Count = 1;
-
 		// Solicita los warriors
-
 		try {
 			warriorWrapper1 = new WarriorWrapper(wm1.getNextWarrior());
 		} catch (RuleException e1) {
@@ -180,18 +185,23 @@ public class BattleField {
 			e.printStackTrace();
 		}
 
-		
+		warriors = new HashMap<Warrior, WarriorWrapper>();
+		warriors.put(warriorWrapper1.getWarrior(), warriorWrapper1);
+		warriors.put(warriorWrapper2.getWarrior(), warriorWrapper2);
+
 		// TODO: Los ubica en el mapa (poner en zonas opuestas
 
 		try {
-			warriorWrapper1.getWarrior().setPosition(cells[random.nextInt(cells.length)][random.nextInt(cells[0].length)]);
+			warriorWrapper1.getWarrior().setPosition(
+					cells[random.nextInt(cells.length)][random.nextInt(cells[0].length)]);
 		} catch (RuleException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		try {
-			warriorWrapper2.getWarrior().setPosition(cells[random.nextInt(cells.length)][random.nextInt(cells[0].length)]);
+			warriorWrapper2.getWarrior().setPosition(
+					cells[random.nextInt(cells.length)][random.nextInt(cells[0].length)]);
 		} catch (RuleException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -204,7 +214,7 @@ public class BattleField {
 			currentWarriorWrapper = warriorWrapper2;
 		}
 
-		ArrayList<Action> currentWarriorActions = null;
+		Action currentWarriorAction = null;
 
 		do {
 
@@ -217,32 +227,23 @@ public class BattleField {
 
 			currentWarriorWrapper.startTurn();
 
-			currentWarriorActions = currentWarriorWrapper.getWarrior().playTurn(tick);
+			for (int i = 0; i < actionPerTurns; i++) {
+				
+				currentWarriorAction = currentWarriorWrapper.getWarrior().playTurn(tick, i);
 
-			for (Action action : currentWarriorActions) {
-
-				if (action instanceof Move) {
-					executeMoveAction((Move) action);
-					continue;
-				}
-
-				if (action instanceof Attack) {
-					executeAttackAction();
-					continue;
-				}
-
-				if (action instanceof Skip) {
+				if (currentWarriorAction instanceof Move) {
+					executeMoveAction((Move) currentWarriorAction);
+				} else if (currentWarriorAction instanceof Attack) {
+					executeAttackAction((Attack) currentWarriorAction);
+				} else if (currentWarriorAction instanceof Skip) {
 					executeSkipAction();
-					continue;
-				}
-
-				if (action instanceof Suicide) {
+				} else if (currentWarriorAction instanceof Suicide) {
 					executeSuicideAction();
-					continue;
 				}
-			}
 
-			frame.repaint();
+				frame.repaint();
+			}
+			
 
 			try {
 				Thread.sleep(50);
@@ -262,7 +263,33 @@ public class BattleField {
 
 	}
 
-	private void executeAttackAction() {
+	private void executeAttackAction(Attack attack) {
+
+		// int damage;
+		//
+		// if (defendingWarrior.getDefense() >= currentWarrior.getStrength()) {
+		//
+		// damage = (int) (Math.random() * 2);
+		//
+		// } else {
+		//
+		// damage = (int) Math.abs(random.nextGaussian()
+		// * (Math.abs(defendingWarrior.getDefense() -
+		// currentWarrior.getStrength()) / 2))
+		// + Math.abs(defendingWarrior.getDefense() -
+		// currentWarrior.getStrength()) / 2;
+		//
+		// }
+		//
+		// System.out.println(damage);
+		// if (defendingWarrior.getActualHealth() < Math.abs(damage)) {
+		//
+		// defendingWarrior.setActualHealth(0);
+		//
+		// } else {
+		// defendingWarrior.setActualHealth(defendingWarrior.getActualHealth() -
+		// (damage));
+		// }
 
 	}
 

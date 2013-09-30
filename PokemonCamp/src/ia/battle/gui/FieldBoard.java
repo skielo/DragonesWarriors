@@ -50,28 +50,27 @@ public class FieldBoard extends JPanel {
 		int health2 = 60;
 		int actualHealth2 = 75;
 
-		int x1=0, y1=0, x2=0, y2=0;
+		int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+		String nombreW1 = "1";
+		String nombreW2 = "2";
 
-		try
-		{
-		x1 = battleField.getWarriors().get(0).getPosition().getX();
-		y1 = battleField.getWarriors().get(0).getPosition().getY();
+		try {
+			x1 = battleField.getWarriors().get(0).getPosition().getX();
+			y1 = battleField.getWarriors().get(0).getPosition().getY();
 
-		x2 = battleField.getWarriors().get(1).getPosition().getX();
-		y2 = battleField.getWarriors().get(1).getPosition().getY();
-		}
-		catch (Exception e) {
+			x2 = battleField.getWarriors().get(1).getPosition().getX();
+			y2 = battleField.getWarriors().get(1).getPosition().getY();
+
+			nombreW1 = battleField.getWarriors().get(0).getName();
+			nombreW2 = battleField.getWarriors().get(1).getName();
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		// String nombreW1 =battleField.getWarrior1().getName();
-		// String nombreW2 = battleField.getWarrior1().getName();
+
 		Font ft = new Font("Times New Roman", Font.PLAIN, 10);
 		g.setFont(ft);
 		// dibujo turnos
-
-		String nombreW1 = "Warrior 1";
-		String nombreW2 = "Warrior 2";
 
 		for (i = 1; i < height; i++) {// dibuja pasto y piedras
 

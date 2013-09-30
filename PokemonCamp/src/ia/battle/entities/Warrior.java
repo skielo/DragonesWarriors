@@ -86,6 +86,7 @@ public abstract class Warrior {
 		
 		this.position = position;
 	}
-	public abstract ArrayList<Action> playTurn(long tick);
+	
+	public abstract Action playTurn(long tick, int actionNumber);
 
 }

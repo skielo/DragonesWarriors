@@ -21,13 +21,11 @@ public class AndrewWarrior extends Warrior {
 	private boolean horizontalDirection;
 
 	@Override
-	public ArrayList<Action> playTurn(long tick) {
-
-		ArrayList<Action> acciones = new ArrayList<Action>();
+	public Action playTurn(long tick, int actionNumber) {
 
 		AndrewMove am = new AndrewMove();
 
-		ArrayList<FieldCell> stepsToDo = new ArrayList<FieldCell>();
+		ArrayList<FieldCell> stepsToDo = new ArrayList<>();
 
 		int x = this.getPosition().getX();
 		int y = this.getPosition().getY();
@@ -65,9 +63,7 @@ public class AndrewWarrior extends Warrior {
 
 		am.setSteps(stepsToDo);
 
-		acciones.add(am);
-
-		return acciones;
+		return am;
 	}
 
 }
