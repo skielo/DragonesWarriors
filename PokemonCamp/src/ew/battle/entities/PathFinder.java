@@ -66,7 +66,7 @@ public class PathFinder {
 	private void AgregarNodosAdyasentes(Node padre){
 		this.openList.addAll(this.mapa.GenerarNodos(padre));
 		for (Node nodo : this.openList) {
-			this.mapa.CalculateFValue(nodo, this.end);
+			this.mapa.CalculateFValue(padre, nodo, this.end);
 		}
 		this.closeList.add(padre);
 		this.openList.remove(padre);	

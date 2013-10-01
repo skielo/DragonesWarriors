@@ -54,7 +54,7 @@ public class Map {
 				break;
 			}
 			//arriba
-			y=parent.getY()+1;
+			y=parent.getY()-1;
 			nodo = new Node(x, y);
 			nodo.setParent(parent);
 			retval.add(nodo);
@@ -66,7 +66,7 @@ public class Map {
 				retval.add(nodo);	
 			}
 			//abajo
-			y=parent.getY()-1;
+			y=parent.getY()+1;
 			nodo = new Node(x, y);
 			nodo.setParent(parent);
 			retval.add(nodo);
@@ -82,24 +82,33 @@ public class Map {
 	/*Genera el calculo del valor F sumando G + H
 	 * 
 	 */
-	public void CalculateFValue(Node nodo, Node destino){
-		nodo.setG(this.CalculateGValue(nodo.getX(), nodo.getY(), destino.getX(), destino.getY()));
+	public void CalculateFValue(Node origen, Node nodo, Node destino){
+		nodo.setG(this.CalculateGValue(origen.getX(), origen.getY(), nodo.getX(), nodo.getY()));
 		nodo.setH(this.CalcularHValue(nodo.getX(), nodo.getY(), destino.getX(), destino.getY()));
 	}
 	
-	/*TODO: Generar el calculo del valor G
-	 * 
+	/* Pasos:
+	 * Encuentra el valor G definiendo para los movimientos en Horizontal y vertical
+	 * un valor de 10 y 14 para los movimientos en diagonal
 	 */
 	private double CalculateGValue(int x, int y, int xdestino, int ydestino){
-		double retval = 0;
+		double retval = 10;
+		int resultX = xdestino-x;
+		int resultY = ydestino-y;
+		
+		if((resultX==-1 && resultY==-1) || 
+			(resultX==1 && resultY==1) || 
+				(resultX==-1 && resultY==1) || 
+					(resultX==1 && resultY==-1))
+			retval=14;
 		return retval;
 	}
 	
-	/*TODO: Generar el calculo del valor H
-	 * utilizando el metodo Manhatan
+	/* Pasos:
+	 * Se calcula el valor H utilizando el metodo Manhatan.
+	 * 
 	 */
 	private double CalcularHValue(int x, int y, int xdestino, int ydestino){
-		double retval = 0;
-		return retval;
+		return (((xdestino-x)+(ydestino-y))*10);
 	}
 }
