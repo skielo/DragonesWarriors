@@ -1,5 +1,9 @@
 package ew.battle.entities;
 
+import ia.battle.camp.BattleField;
+import ia.battle.camp.FieldCell;
+import ia.exceptions.OutOfMapException;
+
 import java.util.ArrayList;
 
 public class PathFinder {
@@ -13,11 +17,30 @@ public class PathFinder {
 		this.closeList = new ArrayList<>();
 	}
 	
-	public ArrayList<Node> Find(Node comienzo, Node fin){
+	public ArrayList<FieldCell> Find(Node comienzo, Node fin){
 		this.end = fin;
 		this.Find(comienzo);
-		return this.closeList;
+		return getMoves();
 	}
+	
+	/* Retorna la lista de de movimientos con el objeto
+	 * utilizado por el BattleField
+	 * 
+	 */
+	private ArrayList<FieldCell> getMoves()
+	{
+		ArrayList<FieldCell> retval = new ArrayList<>();
+		
+		for (Node nodo : this.closeList) {
+			try {			
+				retval.add(BattleField.getInstance().getFieldCell(nodo.getX(),nodo.getY()));
+			} catch (OutOfMapException ex) {
+				ex.printStackTrace();
+			}
+		}
+			
+		return retval;
+	} 
 	
 	/* Pasos:
 	 * Agrego el nodo inicial a la lista abierta
@@ -27,7 +50,7 @@ public class PathFinder {
 	 * Termina cuando el nodo a buscar sea igual al final
 	 * 
 	 */
-	public void Find(Node comienzo){
+	private void Find(Node comienzo){
 		Node lessFValue;
 		if(end==comienzo){
 			return;
