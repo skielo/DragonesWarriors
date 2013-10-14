@@ -97,8 +97,7 @@ public class PathFinder {
 	}
 	
 	private void addToListIfNotExist(List<Node> nodes){
-		Collection<Node> copy = new LinkedList<Node>(nodes);
-        copy.removeAll(this.openList);
-        this.openList.addAll(copy);
+		this.openList.removeAll(nodes);
+        this.openList.addAll(nodes);
 	}
 }
