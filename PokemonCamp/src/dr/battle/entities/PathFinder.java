@@ -1,25 +1,23 @@
-package ew.battle.entities;
+package dr.battle.entities;
 
 import ia.battle.camp.BattleField;
 import ia.battle.camp.FieldCell;
 import ia.exceptions.OutOfMapException;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class PathFinder {
-	private Map mapa = null;
-	private ArrayList<Node> openList, closeList;
+	private List<Node> openList, closeList;
 	private Node start, end;
 	
 	public PathFinder(){
-		this.mapa = new Map();
-		this.openList = new ArrayList<>();
-		this.closeList = new ArrayList<>();
+		this.openList = new Vector<>();
+		this.closeList = new Vector<>();
 	}
 	
-	public ArrayList<FieldCell> Find(Node comienzo, Node fin){
+	public ArrayList<FieldCell> find(Node comienzo, Node fin){
 		this.end = fin;
-		this.Find(comienzo);
+		this.find(comienzo);
 		return getMoves();
 	}
 	
@@ -38,7 +36,8 @@ public class PathFinder {
 				ex.printStackTrace();
 			}
 		}
-			
+		this.openList.clear();
+		this.closeList.clear();
 		return retval;
 	} 
 	
@@ -50,20 +49,22 @@ public class PathFinder {
 	 * Termina cuando el nodo a buscar sea igual al final
 	 * 
 	 */
-	private void Find(Node comienzo){
+	private void find(Node comienzo){
 		Node lessFValue;
-		if(end==comienzo){
+		if(end.equals(comienzo)){
+			this.closeList.add(comienzo);
 			return;
 		}
-		this.openList.add(comienzo);
-		this.AgregarNodosAdyasentes(comienzo);
-		lessFValue = comienzo;
+		if(!this.openList.contains(comienzo))
+			this.openList.add(comienzo);
+		this.agregarNodosAdyasentes(comienzo);
+		lessFValue = this.openList.get(0);
 		for (Node nodo : this.openList) {
 			if(nodo.getF()<lessFValue.getF()){
 				lessFValue = nodo;
 			}
 		}
-		this.Find(lessFValue);
+		this.find(lessFValue);
 	}
 	
 	public Node getEnd() {
@@ -86,12 +87,18 @@ public class PathFinder {
 	 * Calculo F, G, H
 	 * Agrego el padre a la lista cerrada y lo saco de la abierta
 	 */
-	private void AgregarNodosAdyasentes(Node padre){
-		this.openList.addAll(this.mapa.GenerarNodos(padre));
+	private void agregarNodosAdyasentes(Node padre){
+		this.addToListIfNotExist(Map.getInstance().generarNodos(padre));
 		for (Node nodo : this.openList) {
-			this.mapa.CalculateFValue(padre, nodo, this.end);
+			Map.getInstance().calculateFValue(padre, nodo, this.end);
 		}
 		this.closeList.add(padre);
 		this.openList.remove(padre);	
+	}
+	
+	private void addToListIfNotExist(List<Node> nodes){
+		Collection<Node> copy = new LinkedList<Node>(nodes);
+        copy.removeAll(this.openList);
+        this.openList.addAll(copy);
 	}
 }

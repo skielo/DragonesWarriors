@@ -1,4 +1,4 @@
-package ew.battle.entities;
+package dr.battle.entities;
 
 public class Node {
 	private int x,y;
@@ -41,5 +41,10 @@ public class Node {
 	}
 	public void setG(double d) {
 		this.g = d;
+	}
+	
+	@Override
+	public boolean equals(Object x){
+		return ((Node)x).getX()==this.getX()&&((Node)x).getY()==this.getY();
 	}
 }

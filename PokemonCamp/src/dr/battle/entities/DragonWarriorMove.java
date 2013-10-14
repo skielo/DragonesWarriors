@@ -1,11 +1,11 @@
-package ew.battle.entities;
+package dr.battle.entities;
 
 import java.util.ArrayList;
 
 import ia.battle.camp.FieldCell;
 import ia.battle.camp.Move;
 
-public class ElephantWarriorMove extends Move {
+public class DragonWarriorMove extends Move {
 
 	ArrayList<FieldCell> steps = new ArrayList<>();
 	
