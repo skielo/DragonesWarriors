@@ -56,25 +56,7 @@ public class PathFinder {
 	 */
 	private void find(Node comienzo){
 		Node lessFValue=comienzo;
-		/*
-		if(end.equals(comienzo)){
-			((Stack<Node>)this.closeList).addElement(comienzo);
-			return;
-		}
-		if(!this.openList.contains(comienzo))
-			this.openList.add(comienzo);
-		if(latestLess == null)
-			latestLess = comienzo;
-		this.agregarNodosAdyasentes(comienzo);
-		lessFValue = this.openList.get(0);
-		for (Node nodo : this.openList) {
-			if(nodo.getF()<lessFValue.getF() && !latestLess.equals(lessFValue)){
-				lessFValue = nodo;
-			}
-		}
-		latestLess = lessFValue;
-		this.find(lessFValue);
-		*/
+
 		while(!this.closeList.contains(end)){
 			if(!this.openList.contains(lessFValue))
 				this.openList.add(lessFValue);
