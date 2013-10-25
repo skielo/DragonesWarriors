@@ -24,6 +24,10 @@ public class Map {
 		return instance;
 	}
 	
+	public int[][] getCells(){
+		return cells;
+	}
+	
 	private void initCells() {
 		height = ConfigurationManager.getInstance().getMapHeight();
 		width = ConfigurationManager.getInstance().getMapWidth();
@@ -66,6 +70,7 @@ public class Map {
 			if(this.isCellNotOutOfMap(x, y) && this.isCellNotBlocked(x, y)){
 				nodo = new Node(x, y);
 				nodo.setParent(parent);
+				nodo.setParentG(parent.getG());
 				retval.add(nodo);
 			}
 			// centro
@@ -74,6 +79,7 @@ public class Map {
 				if(this.isCellNotOutOfMap(x, y) && this.isCellNotBlocked(x, y)){
 					nodo = new Node(x, y);
 					nodo.setParent(parent);
+					nodo.setParentG(parent.getG());
 					retval.add(nodo);
 				}
 			}
@@ -82,6 +88,7 @@ public class Map {
 			if(this.isCellNotOutOfMap(x, y) && this.isCellNotBlocked(x, y)){
 				nodo = new Node(x, y);
 				nodo.setParent(parent);
+				nodo.setParentG(parent.getG());
 				retval.add(nodo);
 			}
 		}

@@ -8,11 +8,11 @@ import java.util.*;
 
 public class PathFinder {
 	private List<Node> openList, closeList;
-	private Node start, end;
+	private Node start, end, latestLess;
 	
 	public PathFinder(){
 		this.openList = new Vector<>();
-		this.closeList = new Vector<>();
+		this.closeList = new Stack<>();
 	}
 	
 	public ArrayList<FieldCell> find(Node comienzo, Node fin){
@@ -28,16 +28,21 @@ public class PathFinder {
 	private ArrayList<FieldCell> getMoves()
 	{
 		ArrayList<FieldCell> retval = new ArrayList<>();
-		
-		for (Node nodo : this.closeList) {
-			try {			
-				retval.add(BattleField.getInstance().getFieldCell(nodo.getX(),nodo.getY()));
+		Node nodo, father=null;
+		while(!((Stack<Node>)this.closeList).empty()){
+			nodo = ((Stack<Node>)this.closeList).pop();
+			try {
+				if(nodo.equals(this.end) || nodo.equals(father)){
+					father = nodo.getParent();
+					retval.add(BattleField.getInstance().getFieldCell(nodo.getX(),nodo.getY()));
+				}
 			} catch (OutOfMapException ex) {
 				ex.printStackTrace();
 			}
 		}
-		this.openList.clear();
-		this.closeList.clear();
+
+		this.openList = new Vector<>();
+		this.closeList = new Stack<>();
 		return retval;
 	} 
 	
@@ -50,21 +55,40 @@ public class PathFinder {
 	 * 
 	 */
 	private void find(Node comienzo){
-		Node lessFValue;
+		Node lessFValue=comienzo;
+		/*
 		if(end.equals(comienzo)){
-			this.closeList.add(comienzo);
+			((Stack<Node>)this.closeList).addElement(comienzo);
 			return;
 		}
 		if(!this.openList.contains(comienzo))
 			this.openList.add(comienzo);
+		if(latestLess == null)
+			latestLess = comienzo;
 		this.agregarNodosAdyasentes(comienzo);
 		lessFValue = this.openList.get(0);
 		for (Node nodo : this.openList) {
-			if(nodo.getF()<lessFValue.getF()){
+			if(nodo.getF()<lessFValue.getF() && !latestLess.equals(lessFValue)){
 				lessFValue = nodo;
 			}
 		}
+		latestLess = lessFValue;
 		this.find(lessFValue);
+		*/
+		while(!this.closeList.contains(end)){
+			if(!this.openList.contains(lessFValue))
+				this.openList.add(lessFValue);
+			if(latestLess == null)
+				latestLess = lessFValue;
+			this.agregarNodosAdyasentes(lessFValue);
+			lessFValue = this.openList.get(0);
+			for (Node nodo : this.openList) {
+				if(nodo.getF()<lessFValue.getF() && !latestLess.equals(lessFValue)){
+					lessFValue = nodo;
+				}
+			}
+			latestLess = lessFValue;
+		}
 	}
 	
 	public Node getEnd() {
@@ -88,16 +112,32 @@ public class PathFinder {
 	 * Agrego el padre a la lista cerrada y lo saco de la abierta
 	 */
 	private void agregarNodosAdyasentes(Node padre){
-		this.addToListIfNotExist(Map.getInstance().generarNodos(padre));
-		for (Node nodo : this.openList) {
+		List<Node> adyasentes = Map.getInstance().generarNodos(padre);
+		for (Node nodo : adyasentes) {
 			Map.getInstance().calculateFValue(padre, nodo, this.end);
 		}
-		this.closeList.add(padre);
+		this.addToListIfNotExist(adyasentes);
+		((Stack<Node>)this.closeList).addElement(padre);
 		this.openList.remove(padre);	
 	}
 	
 	private void addToListIfNotExist(List<Node> nodes){
-		this.openList.removeAll(nodes);
-        this.openList.addAll(nodes);
+		Node temp;
+		for (Node node : nodes) {
+			//Lo agrego solo si no existe en la lista,
+			//En caso de que exista deberia verificar que el 
+			//valor de G sea menor al nuevo
+			if(this.openList.contains(node)){
+				temp = this.openList.get(this.openList.indexOf(node));
+				if(temp.isNewGBetter(node.getParent().getG())){
+					temp.setParent(node.getParent());
+					temp.setParentG(node.getG());
+					//this.openList.remove(temp);
+					//this.openList.add(node);
+				}
+			}
+			else
+				this.openList.add(node);
+		}
 	}
 }

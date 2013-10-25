@@ -4,6 +4,7 @@ public class Node {
 	private int x,y;
 	private Node parent;
 	private double g,h;
+	private double parentG;
 	
 	public Node(int x, int y){
 		this.x=x;
@@ -36,8 +37,15 @@ public class Node {
 	public double getF() {
 		return this.getG()+this.getH();
 	}
+	/*
+	 * El valor de G es el propio del nodo
+	 * mas el de su padre.
+	 */
 	public double getG() {
-		return g;
+		return this.getParentG() + g;
+	}
+	public boolean isNewGBetter(double newParentG){
+		return (this.getG()>g+newParentG);
 	}
 	public void setG(double d) {
 		this.g = d;
@@ -46,5 +54,11 @@ public class Node {
 	@Override
 	public boolean equals(Object x){
 		return ((Node)x).getX()==this.getX()&&((Node)x).getY()==this.getY();
+	}
+	public double getParentG() {
+		return parentG;
+	}
+	public void setParentG(double parentG) {
+		this.parentG = parentG;
 	}
 }
