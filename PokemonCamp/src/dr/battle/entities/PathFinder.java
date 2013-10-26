@@ -43,6 +43,7 @@ public class PathFinder {
 
 		this.openList = new Vector<>();
 		this.closeList = new Stack<>();
+		Collections.reverse(retval);
 		return retval;
 	} 
 	

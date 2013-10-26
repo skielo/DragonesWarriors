@@ -1,5 +1,6 @@
 package dr.battle.entities;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import ia.battle.camp.Action;
@@ -26,16 +27,46 @@ public class DragonWarrior extends Warrior {
 		int x = this.getPosition().getX();
 		int y = this.getPosition().getY();
 		int xdestino,ydestino;
-		xdestino = random.nextInt(ConfigurationManager.getInstance().getMapWidth());
-		ydestino = random.nextInt(ConfigurationManager.getInstance().getMapHeight());
-		ewm.setSteps(pathFinder.find(new Node(x, y),new Node(xdestino,ydestino)));
-		System.out.println("Yendo de: [" + x + ";" + y + "] a:[" + xdestino + ";" + ydestino + "]");
-		System.out.println("----------------");
-		for (FieldCell field : ewm.steps) {
+
+		if(pendingMoves.steps.size()==0){
+			xdestino = random.nextInt(ConfigurationManager.getInstance().getMapWidth());
+			ydestino = random.nextInt(ConfigurationManager.getInstance().getMapHeight());
+			ewm.setSteps(pathFinder.find(new Node(x, y),new Node(xdestino,ydestino)));
+			//System.out.println("Yendo de: [" + x + ";" + y + "] a:[" + xdestino + ";" + ydestino + "]");
+			//System.out.println("----------------");
+		}
+		else
+			ewm = pendingMoves;
+
+
+		return this.calculateMove(ewm);
+	}
+	
+	private DragonWarriorMove calculateMove(DragonWarriorMove move){
+		DragonWarriorMove retval=new DragonWarriorMove();
+		ArrayList<FieldCell> cpy = (ArrayList<FieldCell>) move.steps.clone();
+		int i =0;
+		
+		//System.out.println("Velocidad: " + this.getSpeed() + ", steps: " + cpy.size());
+		if(cpy.size() <= this.getSpeed()){
+			retval.steps = cpy;
+			pendingMoves.steps.clear();
+		}
+		else{
+			pendingMoves.steps.clear();
+			for (FieldCell field : cpy) {
+				if(i < this.getSpeed())
+					retval.steps.add(field);
+				else
+					pendingMoves.steps.add(field);
+				i++;
+			}
+		}
+
+		for (FieldCell field : retval.steps) {
 			System.out.println("[" + field.getX() + ";" + field.getY() + "]");
 		}
-		//this.showMap();
-		return ewm;
+		return retval;
 	}
 	
     private void showMap() {
