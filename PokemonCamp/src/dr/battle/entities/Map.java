@@ -2,6 +2,8 @@ package dr.battle.entities;
 
 import java.util.*;
 
+import dr.battle.Structure.Maze;
+import dr.battle.Structure.Square;
 import ia.battle.camp.BattleField;
 import ia.battle.camp.ConfigurationManager;
 import ia.battle.camp.FieldCell;
@@ -11,6 +13,12 @@ import ia.exceptions.OutOfMapException;
 
 public class Map {
 	private int[][] cells;
+	private Square[][] map;
+	private Maze maze = null;
+	public Maze getMaze() {
+		return maze;
+	}
+
 	private int height, width;
 	private static Map instance;
 	
@@ -33,6 +41,8 @@ public class Map {
 		width = ConfigurationManager.getInstance().getMapWidth();
 		FieldCell fc = null;
 		cells = new int[width][height];
+		map = new Square[width][height];
+		maze = new Maze(map);
 		
 		for (int i = 0; i < width; i++){
 			for (int j = 0; j < height; j++) {
@@ -42,9 +52,15 @@ public class Map {
 					ex.printStackTrace();
 				}
 				if (fc.getFieldCellType() == FieldCellType.BLOCKED)
+				{
+					maze.getSquare(i, j).setTraversable(false);
 					cells[i][j] = 0;
+				}
 				else
+				{
+					maze.getSquare(i, j).setTraversable(true);
 					cells[i][j] = 1;
+				}
 			}
 		}
 	}

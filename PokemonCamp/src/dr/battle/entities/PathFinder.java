@@ -9,10 +9,12 @@ import java.util.*;
 public class PathFinder {
 	private List<Node> openList, closeList;
 	private Node start, end, latestLess;
+	private Map mapa;
 	
 	public PathFinder(){
 		this.openList = new Vector<>();
 		this.closeList = new Stack<>();
+		//this.mapa = new Map();
 	}
 	
 	public ArrayList<FieldCell> find(Node comienzo, Node fin){
@@ -32,6 +34,8 @@ public class PathFinder {
 		while(!((Stack<Node>)this.closeList).empty()){
 			nodo = ((Stack<Node>)this.closeList).pop();
 			try {
+				if(father==null || !this.closeList.contains(end))
+					father=nodo;
 				if(nodo.equals(this.end) || nodo.equals(father)){
 					father = nodo.getParent();
 					retval.add(BattleField.getInstance().getFieldCell(nodo.getX(),nodo.getY()));
@@ -44,6 +48,7 @@ public class PathFinder {
 		this.openList = new Vector<>();
 		this.closeList = new Stack<>();
 		Collections.reverse(retval);
+		retval.remove(0);
 		return retval;
 	} 
 	
@@ -58,7 +63,7 @@ public class PathFinder {
 	private void find(Node comienzo){
 		Node lessFValue=comienzo;
 
-		while(!this.closeList.contains(end)){
+		while(!this.closeList.contains(end) && this.closeList.size()<75){
 			if(!this.openList.contains(lessFValue))
 				this.openList.add(lessFValue);
 			if(latestLess == null)
@@ -95,12 +100,13 @@ public class PathFinder {
 	 * Agrego el padre a la lista cerrada y lo saco de la abierta
 	 */
 	private void agregarNodosAdyasentes(Node padre){
-		List<Node> adyasentes = Map.getInstance().generarNodos(padre);
+		List<Node> adyasentes = mapa.generarNodos(padre);
 		for (Node nodo : adyasentes) {
-			Map.getInstance().calculateFValue(padre, nodo, this.end);
+			mapa.calculateFValue(padre, nodo, this.end);
 		}
 		this.addToListIfNotExist(adyasentes);
-		((Stack<Node>)this.closeList).addElement(padre);
+		if(!this.closeList.contains(padre))
+			((Stack<Node>)this.closeList).addElement(padre);
 		this.openList.remove(padre);	
 	}
 	
