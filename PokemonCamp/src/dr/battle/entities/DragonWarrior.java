@@ -2,41 +2,100 @@ package dr.battle.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
+import dr.battle.DecisionTree.*;
 import dr.battle.Algorithm.AStarPathFinder;
 import dr.battle.Structure.Square;
-import ia.battle.camp.Action;
-import ia.battle.camp.Attack;
-import ia.battle.camp.BattleField;
-import ia.battle.camp.ConfigurationManager;
-import ia.battle.camp.FieldCell;
-import ia.battle.camp.Warrior;
-import ia.battle.camp.WarriorData;
-import ia.exceptions.OutOfMapException;
-import ia.exceptions.RuleException;
+import ia.battle.camp.*;
+import ia.exceptions.*;
 
 public class DragonWarrior extends Warrior {
 
 	//private PathFinder pathFinder=null;
 	private DragonWarriorMove pendingMoves = new DragonWarriorMove();
-	private Random random = new Random();
+	String decision = "";
 	
 	public DragonWarrior(String name, int health, int defense, int strength,
 			int speed, int range) throws RuleException {
 		super(name, health, defense, strength, speed, range);
 		//pathFinder = new PathFinder();
+		if(!DecisionTreeApp.GetInstance().isTreeBuilded())
+			DecisionTreeApp.GetInstance().generateTree();
 	}
 
 	@Override
 	public Action playTurn(long tick, int actionNumber) {
-		DragonWarriorMove ewm = new DragonWarriorMove();
 		Action retval = null;
 		WarriorData wd = BattleField.getInstance().getEnemyData();
+
+		if(actionNumber==0)
+		{
+			this.ArmarDatosTurno();
+			decision = DecisionTreeApp.GetInstance().queryTree();
+		}
+		//Es hora de escapar!
+		if(decision.equals("huir")){
+			/*
+			if((this.getHealth()<this.getInitialHealth()/2) && this.isEnemyInRange(wd)){
+				retval = new Suicide();
+				//System.out.println("Comelaaaaaaa!");
+			}
+			else{*/
+				retval=this.Huir(actionNumber);
+			//}
+			
+			/*
+			System.out.println("Me escapo");
+			for (FieldCell item : ((DragonWarriorMove)retval).steps) {
+				System.out.println("[" + item.getX() +":"+item.getY()+"]");
+			}*/
+		}
+		//Ataco, Ataco y me las pico!
+		if(decision.equals("atacar-huir")){
+			if((actionNumber==0 || actionNumber==1) && this.isEnemyInRange(wd)){
+				retval = new Attack(wd.getFieldCell());
+				//System.out.println("Por ahora ataco");
+			}	
+			else if(actionNumber==2){
+				retval=this.Huir(actionNumber);
+				/*
+				System.out.println("Me las pico");
+				for (FieldCell item : ((DragonWarriorMove)retval).steps) {
+					System.out.println("[" + item.getX() +":"+item.getY()+"]");
+				}*/
+			}
+				
+			else{
+				retval=this.Acercarse();
+				/*
+				System.out.println("Me acerco");
+				for (FieldCell item : ((DragonWarriorMove)retval).steps) {
+					System.out.println("[" + item.getX() +":"+item.getY()+"]");
+				}*/
+			}	
+		}
+		//Ataco, Ataco y Ataco!
+		if(decision.equals("atacar")){
+			if(this.isEnemyInRange(wd)){
+				retval = new Attack(wd.getFieldCell());
+				//System.out.println("ataco");
+			}	
+			else{
+				retval = this.Acercarse();
+				/*
+				System.out.println("Me acerco");
+				for (FieldCell item : ((DragonWarriorMove)retval).steps) {
+					System.out.println("[" + item.getX() +":"+item.getY()+"]");
+				}*/
+			}	
+		}
+
+		return retval;
+	}
+	
+	private DragonWarriorMove Huir(int actionNumber){
+		DragonWarriorMove ewm = new DragonWarriorMove();
 		boolean clean=false;
-		//int distancia=0;
-		//boolean hasAttacked=false;
-		
 		int x = this.getPosition().getX();
 		int y = this.getPosition().getY();
 		
@@ -44,41 +103,78 @@ public class DragonWarrior extends Warrior {
 		{
 			if(clean)
 				pendingMoves.steps.clear();
-			if(pendingMoves.steps.size()==0 || actionNumber==0){
+			// || actionNumber==0
+			if(pendingMoves.steps.size()==0){
 				Square s = Map.getInstance().getMaze().getSquare(x, y);
-				Square e = this.GetEndPosition();//Map.getInstance().getMaze().getSquare(xdestino, ydestino);
+				Square e = this.GetEndPosition();
 				Map.getInstance().getMaze().setStart(s);
 				Map.getInstance().getMaze().setEnd(e);
 				AStarPathFinder astar = new AStarPathFinder(Map.getInstance().getMaze());
 				ewm.setSteps(astar.getResult());
-				/*ewm.setSteps(pathFinder.find(new Node(x, y),new Node(xdestino,ydestino)));
-				
-				System.out.println("Yendo de: [" + x + ";" + y + "] a:[" + e.getX() + ";" + e.getY() + "]");
-				System.out.println("----------------");
-				*/
 			}
 			else
 				ewm = pendingMoves;
 			clean=true;
 		}while(!this.IsPathValid(ewm.steps));
+		
+		return this.calculateMove(ewm);
+	}
+	
+	private DragonWarriorMove Acercarse(){
+		DragonWarriorMove ewm = new DragonWarriorMove();
+		int x = this.getPosition().getX();
+		int y = this.getPosition().getY();
+		int i =1;
+		int xDestino=0;
+		int yDestino=0;
+		Square e = null;
+		do
+		{
+			do{
+				xDestino=((BattleField.getInstance().getEnemyData().getFieldCell().getX()-this.getRange())+i);
+				yDestino=((BattleField.getInstance().getEnemyData().getFieldCell().getY()-this.getRange())+i);
+				xDestino=(xDestino>=0)?xDestino:xDestino*-1;
+				yDestino=(yDestino>=0)?yDestino:yDestino*-1;
+				e = Map.getInstance().getMaze().getSquare(xDestino,yDestino);
+				i++;
+			}while(!e.isTraversable());
 
-		clean=false;
-		if(this.isEnemyInRange(wd) && actionNumber%2==0){
-			retval = new Attack(wd.getFieldCell());
-			//hasAttacked = true;
-		}
-		else
-			retval = this.calculateMove(ewm);
-		/*
-		try {
-			Resultado.getInstance().SetValues(ewm.steps.size(), this.getHealth(), this.getSpeed(), wd.getHealth(), (int) tick, actionNumber, 
-					hasAttacked, this.getRange(), this.getDefense());
-			Resultado.getInstance().SaveData();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		return retval;
+			Square s = Map.getInstance().getMaze().getSquare(x, y);
+			
+			Map.getInstance().getMaze().setStart(s);
+			Map.getInstance().getMaze().setEnd(e);
+			AStarPathFinder astar = new AStarPathFinder(Map.getInstance().getMaze());
+			ewm.setSteps(astar.getResult());
+			i++;
+		}while(!this.IsPathValid(ewm.steps));
+		
+		return this.calculateMove(ewm);
+	}
+	
+	private void ArmarDatosTurno()
+	{
+		double distancia=0;
+		boolean salud = false,saludEnemigo = false,defensa = false,dist=false;
+		
+		int x = this.getPosition().getX();
+		int y = this.getPosition().getY();
+		distancia = this.CalcularDistancia(x, y, BattleField.getInstance().getEnemyData().getFieldCell().getX(), 
+				BattleField.getInstance().getEnemyData().getFieldCell().getY());
+		
+		dist=(distancia<=this.getRange() || distancia<=this.getSpeed());
+		salud=(this.getHealth()>=this.getInitialHealth()/2);
+		saludEnemigo=(this.getHealth()>=BattleField.getInstance().getEnemyData().getHealth());
+		defensa=(this.getDefense()>=this.getInitialDefense()/2);
+		Turno.getInstance().SetValues(dist, salud, saludEnemigo, defensa);
+	}
+	
+	private double CalcularDistancia(int x, int y, int xdestino, int ydestino){
+		double difX, difY;
+		difX = x-xdestino;
+		difY = y-ydestino;
+		difX = difX>=0?difX:difX*-1;
+		difY = difY>=0?difY:difY*-1;
+		return (difX+difY);
 	}
 	
 	private boolean isEnemyInRange(WarriorData wd){
@@ -116,22 +212,36 @@ public class DragonWarrior extends Warrior {
 				i++;
 			}
 		}
-		/**/
+		/*
 		System.out.println("Posicion actual: [" + this.getPosition().getX() + ":" + this.getPosition().getY() + "]");
 		for (FieldCell field : retval.steps) {
 			System.out.println("[" + field.getX() + ":" + field.getY() + "]");
 		}
-		
+		*/
 		return retval;
 	}
 	
 	private Square GetEndPosition()
 	{
 		Square e = null;
+		int x,y;
 		do
 		{
-			e = Map.getInstance().getMaze().getSquare(random.nextInt(ConfigurationManager.getInstance().getMapWidth()), 
-					random.nextInt(ConfigurationManager.getInstance().getMapHeight()));
+			if(BattleField.getInstance().getEnemyData().getFieldCell().getX() >= this.getPosition().getX()
+					&& this.getPosition().getX()!=0){
+				x=10;
+			}
+			else{
+				x=ConfigurationManager.getInstance().getMapWidth()-5;
+			}
+			if(BattleField.getInstance().getEnemyData().getFieldCell().getY() >= this.getPosition().getY()
+					&& this.getPosition().getY()!=0){
+				y=10;
+			}
+			else{
+				y=ConfigurationManager.getInstance().getMapHeight()-7;
+			}
+			e = Map.getInstance().getMaze().getSquare(x, y);
 		}while(!e.isTraversable());
 		return e;
 	}

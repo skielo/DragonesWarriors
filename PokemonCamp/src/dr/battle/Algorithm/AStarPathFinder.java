@@ -45,8 +45,7 @@ public class AStarPathFinder extends PathFinder {
 	 * /java-how-do-i-use-a-priorityqueue
 	 */
 	private Comparator<Square> comparator = new SquareComparator();
-	private PriorityQueue<Square> openlist = new PriorityQueue<Square>(10,
-			comparator);
+	private PriorityQueue<Square> openlist = new PriorityQueue<Square>(10,comparator);
 
 	/**
 	 * This is a constructor for the algorithm. it generates the solution at the
@@ -57,6 +56,8 @@ public class AStarPathFinder extends PathFinder {
 	 */
 	public AStarPathFinder(Maze maze) {
 		super();
+		this.closedlist = new HashSet<Square>();
+		openlist = new PriorityQueue<Square>(10,comparator);
 		mazeCheck(maze);
 		this.maze = maze;
 		findPath();
@@ -74,17 +75,17 @@ public class AStarPathFinder extends PathFinder {
 		Square end = maze.getEnd();
 
 		openlist.add(start);
-
+// && closedlist.size()<=200
 		while (!closedlist.contains(end)) {
 			Square current = openlist.peek();
 			if (openlist.size() == 0) {
 				closedlist.clear();
-				System.err.println("No result found");
+				//System.err.println("No result found");
 				return;
 			}
 			if (current.equals(end)) { // the Path found.
 				closedlist.add(openlist.poll());
-				System.out.println("Path found.");
+				//System.out.println("Path found.");
 				return;
 			} else {
 				closedlist.add(openlist.poll());
@@ -103,6 +104,14 @@ public class AStarPathFinder extends PathFinder {
 				}
 			}
 		}
+		/*
+		Square e = null;
+		if(!closedlist.contains(end)){
+			for (Square it : closedlist) {
+				e = it;
+			}
+			e.setParent(end);
+		}*/
 	}
 
 	public ArrayList<FieldCell> getResult() {
@@ -114,12 +123,23 @@ public class AStarPathFinder extends PathFinder {
 		ArrayList<FieldCell> retval = new ArrayList<>();
 		Object[] list = closedlist.toArray();
 		ArrayList<Square> tem = new ArrayList<>();
-		
+
+		Square temp = null;
 		for (int i = 0; i < list.length; i++) {
 			tem.add((Square)list[i]);
 		}
 		//Collections.sort(tem);
-		Square temp = tem.get(tem.indexOf(maze.getEnd()));
+		/*
+		if(tem.contains(maze.getEnd())){
+			temp = tem.get(tem.indexOf(maze.getEnd()));
+		}
+		else if(temp==null){
+			temp = tem.get(tem.indexOf((Square)list[list.length-1]));
+		}
+		*/
+		temp = tem.get(tem.indexOf(maze.getEnd()));
+			
+		
 		this.AddToList(temp, retval);
 		/*
 		for (Square item : tem) {

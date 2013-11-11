@@ -27,27 +27,27 @@ public class PathFinder {
 
 	public void mazeCheck(Maze maze) {
 		if (maze == null) {
-			System.err.println("Invalid Maze to solve");
+			//System.err.println("Invalid Maze to solve");
 			throw new NullPointerException();
 		}
 
 		if (maze.getStart() == null) {
-			System.err.println("Maze has no start.");
+			//System.err.println("Maze has no start.");
 			throw new InvalidStartException();
 		}
 
 		if (maze.getEnd() == null) {
-			System.err.println("Maze has no end.");
+			//System.err.println("Maze has no end.");
 			throw new InvalidEndException();
 		}
 
 		if (maze.getStart().isTraversable() == false) {
-			System.err.println("Maze start is unpassable.");
+			//System.err.println("Maze start is unpassable.");
 			throw new InvalidStartException();
 		}
 
 		if (maze.getEnd().isTraversable() == false) {
-			System.err.println("Maze end is unreachable.");
+			//System.err.println("Maze end is unreachable.");
 			throw new InvalidEndException();
 		}
 	}
