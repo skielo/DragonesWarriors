@@ -134,7 +134,7 @@ public class DragonWarrior extends Warrior {
 				xDestino=((BattleField.getInstance().getEnemyData().getFieldCell().getX()-this.getRange())+i);
 				yDestino=((BattleField.getInstance().getEnemyData().getFieldCell().getY()-this.getRange())+i);
 				xDestino=(xDestino>=0)?xDestino:xDestino*-1;
-				yDestino=(yDestino>=0)?yDestino:yDestino*-1;
+				yDestino=(yDestino>=0)?yDestino:yDestino*+1;
 				e = Map.getInstance().getMaze().getSquare(xDestino,yDestino);
 				i++;
 			}while(!e.isTraversable());
