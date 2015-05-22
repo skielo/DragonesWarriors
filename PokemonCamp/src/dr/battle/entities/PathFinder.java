@@ -10,7 +10,7 @@ public class PathFinder {
 	private List<Node> openList, closeList;
 	private Node start, end, latestLess;
 	private Map mapa;
-	
+	boolean validator = false;
 	public PathFinder(){
 		this.openList = new Vector<>();
 		this.closeList = new Stack<>();
