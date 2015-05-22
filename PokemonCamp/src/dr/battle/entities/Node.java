@@ -5,7 +5,7 @@ public class Node {
 	private Node parent;
 	private double g,h;
 	private double parentG;
-	
+	boolean validator = false;
 	public Node(int x, int y){
 		this.x=x;
 		this.y=y;
