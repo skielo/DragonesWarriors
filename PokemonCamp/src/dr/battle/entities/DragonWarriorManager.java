@@ -9,6 +9,7 @@ import ia.exceptions.RuleException;
 public class DragonWarriorManager extends WarriorManager {
 	int previous=0;
 	int count=0;
+	boolean validator = false;
 	@Override
 	public Warrior getNextWarrior() throws RuleException {
 		DragonWarrior ew = null;

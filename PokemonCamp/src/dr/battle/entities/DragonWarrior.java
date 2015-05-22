@@ -14,7 +14,7 @@ public class DragonWarrior extends Warrior {
 	//private PathFinder pathFinder=null;
 	private DragonWarriorMove pendingMoves = new DragonWarriorMove();
 	String decision = "";
-	
+
 	public DragonWarrior(String name, int health, int defense, int strength,
 			int speed, int range) throws RuleException {
 		super(name, health, defense, strength, speed, range);
